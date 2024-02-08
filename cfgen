@@ -1,0 +1,33 @@
+#!/bin/bash
+
+function generate_file() {
+	parse_args $1
+	WORDS=$(cat $1)
+	FILENAME="compile_flags.txt"
+	FLAGS=""
+	for word in $WORDS; do
+		if [[ ${word:0:2} == "-I" || ${word:0:2} == "-L" ]]; then
+			echo $word >> $FILENAME
+		fi
+	done
+	echo -e "$(cat $FILENAME | sort)" > $FILENAME
+}
+
+function help() {
+	echo -e "Usage: cfgen [FILE]\n"
+	echo -e "Generate compile_flags.txt file from a single Makefile\n"
+	echo -e "Example: cfgen root/Makefile\n"
+	echo -e "For bug report, raise an issue at https://github.com/sunnybeta/cfgen/issues or email Sunny Beta <sunnybeta@protonmail.com>."
+}
+
+function parse_args() {
+	if [[ ! -f $1 || $1 == "" ]]; then
+		help
+		exit 1
+	fi
+}
+
+parse_args $1
+generate_file $1
+
+# FIN
